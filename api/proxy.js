@@ -15,7 +15,23 @@ export default async function handler(req, res) {
     });
 
     if (!response.ok) {
-      return res.status(response.status).send("Failed to fetch stream");
+      const errorText = await response.text(); // capture server's error message
+      console.error("Stream fetch failed:", {
+        status: response.status,
+        statusText: response.statusText,
+        url: decodedUrl,
+        referer: ref,
+        errorText,
+      });
+
+      return res.status(response.status).json({
+        message: "Failed to fetch stream",
+        status: response.status,
+        statusText: response.statusText,
+        url: decodedUrl,
+        referer: ref,
+        errorText,
+      });
     }
 
     const contentType =
